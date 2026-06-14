@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — AXIOM Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --black: #0A0A0A;
+    --surface: #111111;
+    --card: #181818;
+    --gold: #D4AF37;
+    --gold-dim: rgba(212,175,55,0.12);
+    --off-white: #F5F0E8;
+    --muted: #6B6B6B;
+    --border: rgba(245,240,232,0.08);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--off-white); font-family: 'Inter', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
+  #cursor { width: 10px; height: 10px; background: var(--gold); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: transform 0.15s; }
+  #cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(212,175,55,0.5); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), width 0.3s, height 0.3s; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 28px 48px; background: rgba(10,10,10,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.12em; color: var(--off-white); text-decoration: none; }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--off-white); }
+  .nav-cta { background: var(--gold); color: var(--black) !important; padding: 10px 22px; font-weight: 500 !important; }
+  .nav-cta:hover { background: var(--off-white) !important; }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .nav-hamburger span { width: 24px; height: 1px; background: var(--off-white); display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 180px 48px 100px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header-bg {
+    position: absolute;
+    top: 0; right: -100px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22rem;
+    color: rgba(212,175,55,0.025);
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+  .breadcrumb {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+  .breadcrumb span { color: var(--gold); }
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 9vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--off-white);
+  }
+  .page-title em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gold);
+    font-size: 0.92em;
+  }
+  .page-intro {
+    max-width: 520px;
+    margin-top: 40px;
+    font-size: 0.98rem;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  /* COMMON */
+  section { padding: 100px 48px; }
+  .section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 4.5vw, 4.5rem); line-height: 1; color: var(--off-white); }
+  .section-title em { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; font-size: 1.05em; }
+
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* STORY */
+  .story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: start;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 100px;
+  }
+  .story-text p {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .story-text p strong { color: var(--off-white); font-weight: 400; }
+  .story-aside {
+    position: sticky;
+    top: 120px;
+  }
+  .story-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--off-white);
+    border-left: 2px solid var(--gold);
+    padding-left: 28px;
+    margin-bottom: 48px;
+  }
+  .story-quote em { color: var(--gold); font-style: italic; }
+  .founding-line {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .founding-line::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  /* VALUES */
+  .values-section { border-bottom: 1px solid var(--border); }
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 64px;
+  }
+  .value-card {
+    background: var(--surface);
+    padding: 48px 36px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+  .value-card:hover { background: var(--card); }
+  .value-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -10px; right: 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 8rem;
+    color: rgba(212,175,55,0.05);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .value-icon {
+    width: 40px; height: 40px;
+    border: 1px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px;
+  }
+  .value-icon svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; }
+  .value-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    color: var(--off-white);
+    margin-bottom: 14px;
+  }
+  .value-desc {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  /* TEAM */
+  .team-section { border-bottom: 1px solid var(--border); }
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 64px;
+  }
+  .team-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .team-avatar {
+    aspect-ratio: 3/4;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .avatar-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+  }
+  .team-card:hover .avatar-bg { transform: scale(1.04); }
+  .av1 { background: linear-gradient(160deg, #1a1200, #3a2800, #1a1200); }
+  .av2 { background: linear-gradient(160deg, #0e0e1e, #1e1e3e, #0e0e1e); }
+  .av3 { background: linear-gradient(160deg, #0e1a10, #1a2e1a, #0e1a10); }
+  .av4 { background: linear-gradient(160deg, #1a0e10, #2e1a1e, #1a0e10); }
+  .avatar-initial {
+    position: absolute;
+    bottom: 24px; left: 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(212,175,55,0.25);
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+  .avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  }
+  .team-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--off-white);
+    margin-bottom: 4px;
+  }
+  .team-role {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .team-bio {
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* AWARDS */
+  .awards-section {}
+  .awards-list { margin-top: 64px; }
+  .award-row {
+    display: grid;
+    grid-template-columns: 80px 2fr 1fr 1fr;
+    align-items: center;
+    gap: 32px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    transition: padding-left 0.3s;
+  }
+  .award-row:hover { padding-left: 12px; }
+  .award-row:first-child { border-top: 1px solid var(--border); }
+  .award-year {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+  }
+  .award-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--off-white);
+  }
+  .award-org {
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .award-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid var(--gold);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    justify-self: flex-end;
+  }
+
+  /* CTA */
+  .about-cta {
+    background: var(--surface);
+    padding: 100px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+    border-top: 1px solid var(--border);
+  }
+  .about-cta h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 4vw, 4.5rem); line-height: 1; color: var(--off-white); }
+  .about-cta h2 em { font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300; color: var(--gold); }
+  .btn-primary { display: inline-block; background: var(--gold); color: var(--black); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; padding: 16px 36px; transition: background 0.3s, transform 0.2s; flex-shrink: 0; }
+  .btn-primary:hover { background: var(--off-white); transform: translateY(-2px); }
+  .btn-ghost { display: inline-block; border: 1px solid var(--border); color: var(--off-white); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; padding: 16px 36px; transition: border-color 0.3s, color 0.3s; }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 80px 48px 40px; }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; padding-bottom: 60px; border-bottom: 1px solid var(--border); }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.12em; color: var(--off-white); margin-bottom: 16px; }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline { font-size: 0.83rem; color: var(--muted); line-height: 1.7; max-width: 240px; }
+  .footer-col h4 { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+  .footer-col ul a:hover { color: var(--off-white); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; font-size: 0.75rem; color: var(--muted); }
+  .footer-social { display: flex; gap: 24px; }
+  .footer-social a { color: var(--muted); text-decoration: none; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+  .footer-social a:hover { color: var(--gold); }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; } .nav-links { display: none; } .nav-hamburger { display: flex; }
+    .page-header { padding: 140px 24px 60px; }
+    section { padding: 60px 24px; }
+    .story { grid-template-columns: 1fr; gap: 48px; }
+    .story-aside { position: static; }
+    .values-grid { grid-template-columns: 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .award-row { grid-template-columns: 60px 1fr; gap: 16px; }
+    .award-org, .award-badge { display: none; }
+    .about-cta { flex-direction: column; gap: 32px; padding: 60px 24px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  }
+  @media (max-width: 560px) {
+    .values-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">AXIO<span>M</span></a>
+  <ul class="nav-links">
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="projects.html">Work</a></li>
+    <li><a href="contact.html" class="nav-cta">Start a Project</a></li>
+  </ul>
+  <div class="nav-hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-bg">ABOUT</div>
+  <p class="breadcrumb">AXIOM Studio <span>/ About</span></p>
+  <h1 class="page-title">The studio<br>behind the <em>work.</em></h1>
+  <p class="page-intro">We're a small, deliberate team of designers, strategists, and builders. We believe in doing fewer things at a higher standard — and we're unreasonably particular about the details.</p>
+</div>
+
+<!-- STORY -->
+<section id="story">
+  <div class="story">
+    <div class="story-text reveal">
+      <p class="section-eyebrow">Our Story</p>
+      <p><strong>AXIOM Studio was founded in 2018</strong> by creative director Nadia Holt and strategist Elliot Marsh, who met while leading projects at a global agency in London. They shared a frustration: the larger the agency, the further the work drifted from the original idea.</p>
+      <p>They left to build something smaller, more intentional. The name came from a philosophy: an axiom is a truth that doesn't require proof. The brands they wanted to build would be the same — self-evident, undeniable.</p>
+      <p>The studio grew quietly at first, working with a handful of early-stage companies who couldn't afford a large agency but needed the quality of one. Word spread. Within two years, they were turning away more projects than they accepted.</p>
+      <p>Today, <strong>AXIOM Studio operates from studios in London and Cape Town</strong> with a core team of eight and a trusted network of specialists. We still turn work away. Every project is a commitment — to the client, to the idea, and to the work itself.</p>
+    </div>
+    <div class="story-aside reveal">
+      <div class="story-quote">
+        "An axiom is a truth that doesn't require proof. The brands we build should feel the same — <em>self-evident.</em>"
+      </div>
+      <div class="founding-line">Founded 2018, London</div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values-section" id="values">
+  <p class="section-eyebrow reveal">What We Stand For</p>
+  <h2 class="section-title reveal">Principles that<br><em>don't flex.</em></h2>
+  <div class="values-grid">
+    <div class="value-card reveal" data-num="I">
+      <div class="value-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="value-name">Precision</div>
+      <p class="value-desc">We sweat the details that most people never notice — because the people who do notice are usually the ones worth impressing. Craft is not decoration; it's how we communicate respect for the work and the audience.</p>
+    </div>
+    <div class="value-card reveal reveal-delay-1" data-num="II">
+      <div class="value-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      </div>
+      <div class="value-name">Courage</div>
+      <p class="value-desc">Safe work is invisible work. We push for ideas that carry risk — and we back our clients through the discomfort. Agreeing with everyone is not a design philosophy; it's a failure of imagination.</p>
+    </div>
+    <div class="value-card reveal reveal-delay-2" data-num="III">
+      <div class="value-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="value-name">Clarity</div>
+      <p class="value-desc">We remove until we can't remove anymore. A brand with too many ideas has no idea. Clarity is not simplicity — it is the hard-won absence of noise, so the right signal reaches the right person.</p>
+    </div>
+    <div class="value-card reveal" data-num="IV">
+      <div class="value-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="value-name">Partnership</div>
+      <p class="value-desc">We don't take briefs; we form alliances. The best outcomes happen when both sides bring full knowledge, full honesty, and full commitment to the table. We work with clients who treat us as collaborators, not vendors.</p>
+    </div>
+    <div class="value-card reveal reveal-delay-1" data-num="V">
+      <div class="value-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="value-name">Longevity</div>
+      <p class="value-desc">Trend-chasing is expensive. We design for the long arc — systems built to flex and grow, identities that age well, and digital products that don't require a rebuild every eighteen months.</p>
+    </div>
+    <div class="value-card reveal reveal-delay-2" data-num="VI">
+      <div class="value-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.2"><circle cx="12" cy="12" r="2"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      </div>
+      <div class="value-name">Curiosity</div>
+      <p class="value-desc">We stay students. Design, technology, and culture move fast. The studio that stops learning stops being useful. We invest in exploration — even when there's no immediate project to apply it to.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team-section" id="team">
+  <div class="reveal">
+    <p class="section-eyebrow">The People</p>
+    <h2 class="section-title">Eight minds.<br><em>One standard.</em></h2>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-avatar">
+        <div class="avatar-bg av1"></div>
+        <div class="avatar-overlay"></div>
+        <div class="avatar-initial">NH</div>
+      </div>
+      <div class="team-role">Creative Director & Co-Founder</div>
+      <div class="team-name">Nadia Holt</div>
+      <p class="team-bio">Former creative lead at Wolff Olins. Nadia has built visual identities for FTSE 100 firms and independent founders alike — with no visible difference in the standard applied.</p>
+    </div>
+    <div class="team-card reveal reveal-delay-1">
+      <div class="team-avatar">
+        <div class="avatar-bg av2"></div>
+        <div class="avatar-overlay"></div>
+        <div class="avatar-initial">EM</div>
+      </div>
+      <div class="team-role">Strategy Director & Co-Founder</div>
+      <div class="team-name">Elliot Marsh</div>
+      <p class="team-bio">A decade in brand strategy across three continents. Elliot translates what businesses actually need — not what they ask for — into frameworks that design teams can execute with precision.</p>
+    </div>
+    <div class="team-card reveal reveal-delay-2">
+      <div class="team-avatar">
+        <div class="avatar-bg av3"></div>
+        <div class="avatar-overlay"></div>
+        <div class="avatar-initial">KA</div>
+      </div>
+      <div class="team-role">Head of Digital Experience</div>
+      <div class="team-name">Kofi Asante</div>
+      <p class="team-bio">Previously at Google Design and IDEO. Kofi leads all web and product work, specialising in the intersection of interaction design and front-end architecture — where beautiful and functional are the same thing.</p>
+    </div>
+    <div class="team-card reveal reveal-delay-3">
+      <div class="team-avatar">
+        <div class="avatar-bg av4"></div>
+        <div class="avatar-overlay"></div>
+        <div class="avatar-initial">SR</div>
+      </div>
+      <div class="team-role">Motion & AI Director</div>
+      <div class="team-name">Sofia Reyes</div>
+      <p class="team-bio">A motion designer turned AI experience architect. Sofia leads AXIOM's newest practice — building interfaces that leverage generative models while keeping the human at the centre of every interaction.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section id="awards">
+  <div class="reveal">
+    <p class="section-eyebrow">Recognition</p>
+    <h2 class="section-title">The work has<br><em>been noticed.</em></h2>
+  </div>
+  <div class="awards-list reveal">
+    <div class="award-row">
+      <div class="award-year">2024</div>
+      <div class="award-name">Site of the Year — VANTA Capital Rebrand</div>
+      <div class="award-org">Awwwards</div>
+      <div class="award-badge">Gold</div>
+    </div>
+    <div class="award-row">
+      <div class="award-year">2024</div>
+      <div class="award-name">Best Brand Identity System — FLORA Botanicals</div>
+      <div class="award-org">D&AD</div>
+      <div class="award-badge">Wood Pencil</div>
+    </div>
+    <div class="award-row">
+      <div class="award-year">2023</div>
+      <div class="award-name">Interactive Experience of the Year</div>
+      <div class="award-org">FWA</div>
+      <div class="award-badge">FOTM</div>
+    </div>
+    <div class="award-row">
+      <div class="award-year">2023</div>
+      <div class="award-name">Agency of the Year — Independent (UK/Africa)</div>
+      <div class="award-org">Creative Review</div>
+      <div class="award-badge">Shortlist</div>
+    </div>
+    <div class="award-row">
+      <div class="award-year">2022</div>
+      <div class="award-name">Digital Craft — NEURA Labs Platform</div>
+      <div class="award-org">Cannes Lions</div>
+      <div class="award-badge">Bronze</div>
+    </div>
+    <div class="award-row">
+      <div class="award-year">2021</div>
+      <div class="award-name">Best Motion Identity — Meridian Financial Group</div>
+      <div class="award-org">The Webby Awards</div>
+      <div class="award-badge">Winner</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT CTA -->
+<div class="about-cta reveal">
+  <h2>Become our<br>next <em>obsession.</em></h2>
+  <div style="display:flex; gap: 16px; flex-wrap: wrap;">
+    <a href="contact.html" class="btn-primary">Start a Conversation</a>
+    <a href="projects.html" class="btn-ghost">See Our Work</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">AXIO<span>M</span></div>
+      <p class="footer-tagline">A branding and digital experience studio. We build things that last.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <ul><li><a href="about.html">About</a></li><li><a href="about.html#team">Team</a></li><li><a href="about.html#values">Values</a></li><li><a href="about.html#awards">Awards</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul><li><a href="services.html">Web Design</a></li><li><a href="services.html">Brand Identity</a></li><li><a href="services.html">Motion Design</a></li><li><a href="services.html">AI Experiences</a></li></ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul><li><a href="projects.html">Case Studies</a></li><li><a href="contact.html">Contact</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 AXIOM Studio. All rights reserved.</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a><a href="#">Behance</a><a href="#">LinkedIn</a><a href="#">Dribbble</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => obs.observe(r));
+
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    const shown = links.style.display === 'flex';
+    links.style.cssText = shown ? 'display:none' : 'display:flex;flex-direction:column;position:absolute;top:70px;left:0;right:0;background:rgba(10,10,10,0.98);padding:24px;gap:20px;border-bottom:1px solid rgba(245,240,232,0.08)';
+  }
+</script>
+</body>
+</html>
