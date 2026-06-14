@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXIOM Studio — Branding & Digital Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --black: #0A0A0A;
+    --surface: #111111;
+    --card: #181818;
+    --gold: #D4AF37;
+    --gold-dim: rgba(212,175,55,0.15);
+    --off-white: #F5F0E8;
+    --muted: #6B6B6B;
+    --border: rgba(245,240,232,0.08);
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--off-white);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  /* CURSOR */
+  #cursor {
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, opacity 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(212,175,55,0.5);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), width 0.3s, height 0.3s, opacity 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  body:hover #cursor { opacity: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 48px;
+    transition: background 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.12em;
+    color: var(--off-white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--off-white); }
+  .nav-cta {
+    background: var(--gold);
+    color: var(--black) !important;
+    padding: 10px 22px;
+    font-weight: 500 !important;
+    transition: background 0.3s, transform 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--off-white) !important; transform: translateY(-1px); }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .nav-hamburger span { width: 24px; height: 1px; background: var(--off-white); transition: all 0.3s; display: block; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 48px;
+    padding-top: 120px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 13vw, 14rem);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--off-white);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-headline .gold { color: var(--gold); }
+  .hero-headline .italic {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(4.5rem, 11vw, 12rem);
+    font-weight: 300;
+  }
+  .hero-sub-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 48px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .hero-descriptor {
+    max-width: 360px;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+  .hero-descriptor strong { color: var(--off-white); font-weight: 400; }
+  .hero-actions { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--black);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 16px 36px;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--off-white); transform: translateY(-2px); }
+  .btn-ghost {
+    display: inline-block;
+    border: 1px solid var(--border);
+    color: var(--off-white);
+    text-decoration: none;
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 16px 36px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 1.4s forwards;
+  }
+  .hero-scroll-hint span {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .scroll-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+  .hero-bg-text {
+    position: absolute;
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18rem;
+    color: rgba(212,175,55,0.03);
+    letter-spacing: 0.05em;
+    pointer-events: none;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* TICKER */
+  .ticker-wrap {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    background: var(--surface);
+  }
+  .ticker {
+    display: flex;
+    gap: 0;
+    animation: ticker 24s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 32px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    padding-right: 60px;
+  }
+  .ticker-item .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .ticker-item:hover { color: var(--gold); }
+
+  /* SECTION COMMON */
+  section { padding: 120px 48px; }
+  .section-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    line-height: 1;
+    color: var(--off-white);
+    letter-spacing: 0.02em;
+  }
+  .section-title em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.05em;
+  }
+
+  /* STATEMENT */
+  .statement {
+    padding: 120px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .statement-left { }
+  .statement-right {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.9rem, 3.2vw, 3rem);
+    font-weight: 300;
+    line-height: 1.4;
+    color: var(--off-white);
+  }
+  .statement-right em { color: var(--gold); font-style: italic; }
+  .statement-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 48px;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--gold);
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* SELECTED WORK */
+  .work-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 64px;
+  }
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 2px;
+  }
+  .work-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--card);
+  }
+  .work-card:first-child { grid-row: span 2; }
+  .work-visual {
+    width: 100%;
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .work-card:first-child .work-visual { min-height: 560px; }
+  .work-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.7s cubic-bezier(0.23,1,0.32,1);
+  }
+  .work-card:hover .work-bg { transform: scale(1.06); }
+  .work-bg-1 { background: linear-gradient(135deg, #1a1200 0%, #3a2a00 40%, #1a0e00 100%); }
+  .work-bg-2 { background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0f0f1a 100%); }
+  .work-bg-3 { background: linear-gradient(135deg, #0f1a0f 0%, #1a2a1a 50%, #0a120a 100%); }
+  .work-abstract {
+    position: absolute;
+    inset: 0;
+    opacity: 0.6;
+  }
+  .work-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 32px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    transform: translateY(8px);
+    transition: transform 0.4s ease;
+  }
+  .work-card:hover .work-info { transform: translateY(0); }
+  .work-cat {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .work-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    color: var(--off-white);
+  }
+  .work-arrow {
+    position: absolute;
+    top: 24px; right: 24px;
+    width: 40px; height: 40px;
+    border: 1px solid rgba(212,175,55,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: scale(0.8);
+  }
+  .work-card:hover .work-arrow { opacity: 1; transform: scale(1); }
+  .work-arrow svg { width: 16px; height: 16px; fill: var(--gold); }
+
+  /* SVG ABSTRACT SHAPES */
+  .shape-rings circle { fill: none; stroke: rgba(212,175,55,0.2); }
+  .shape-grid line { stroke: rgba(100,100,255,0.2); }
+  .shape-organic path { fill: none; stroke: rgba(100,200,100,0.2); }
+
+  /* SERVICES PREVIEW */
+  .services-preview {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .services-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 64px;
+    border: 1px solid var(--border);
+  }
+  .service-item {
+    padding: 40px 36px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-item:hover { background: var(--card); }
+  .service-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+  .service-item:hover::after { width: 100%; }
+  .service-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+  }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--off-white);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .service-brief {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* CTA BAND */
+  .cta-band {
+    padding: 120px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+  }
+  .cta-band-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(212,175,55,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-band h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 7.5rem);
+    line-height: 0.95;
+    color: var(--off-white);
+    letter-spacing: 0.02em;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .cta-band h2 em {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gold);
+    font-size: 0.9em;
+  }
+  .cta-band p {
+    font-size: 0.95rem;
+    color: var(--muted);
+    max-width: 420px;
+    margin: 0 auto 40px;
+    line-height: 1.75;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 80px 48px 40px;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+    color: var(--off-white);
+    margin-bottom: 16px;
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 240px;
+  }
+  .footer-col h4 {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s;
+  }
+  .footer-col ul a:hover { color: var(--off-white); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 32px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .footer-social { display: flex; gap: 24px; }
+  .footer-social a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .footer-social a:hover { color: var(--gold); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav.scrolled { padding: 14px 24px; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    .hero { padding: 0 24px; padding-top: 100px; }
+    .hero-sub-row { flex-direction: column; align-items: flex-start; gap: 32px; }
+    section { padding: 80px 24px; }
+    .statement { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+    .work-grid { grid-template-columns: 1fr; }
+    .work-card:first-child { grid-row: auto; }
+    .services-list { grid-template-columns: 1fr 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+    .statement-stats { grid-template-columns: 1fr 1fr; }
+    .cta-band { padding: 80px 24px; }
+  }
+  @media (max-width: 560px) {
+    .services-list { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+    .work-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">AXIO<span>M</span></a>
+  <ul class="nav-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="projects.html">Work</a></li>
+    <li><a href="contact.html" class="nav-cta">Start a Project</a></li>
+  </ul>
+  <div class="nav-hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-text">AXIOM</div>
+  <p class="hero-eyebrow">Branding & Digital Experience Studio — Est. 2018</p>
+  <h1 class="hero-headline">
+    WE BUILD<br>
+    <span class="italic gold">things that</span><br>
+    LAST.
+  </h1>
+  <div class="hero-sub-row">
+    <p class="hero-descriptor">
+      <strong>AXIOM Studio</strong> is a creative agency specialising in brand identity, digital experiences, and motion design. We work with founders and enterprises who refuse to blend in.
+    </p>
+    <div class="hero-actions">
+      <a href="projects.html" class="btn-primary">View Our Work</a>
+      <a href="contact.html" class="btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <div class="ticker-item"><span class="dot"></span>Brand Identity</div>
+    <div class="ticker-item"><span class="dot"></span>Web Design</div>
+    <div class="ticker-item"><span class="dot"></span>Motion Design</div>
+    <div class="ticker-item"><span class="dot"></span>AI Experiences</div>
+    <div class="ticker-item"><span class="dot"></span>Digital Strategy</div>
+    <div class="ticker-item"><span class="dot"></span>Campaigns</div>
+    <div class="ticker-item"><span class="dot"></span>Brand Identity</div>
+    <div class="ticker-item"><span class="dot"></span>Web Design</div>
+    <div class="ticker-item"><span class="dot"></span>Motion Design</div>
+    <div class="ticker-item"><span class="dot"></span>AI Experiences</div>
+    <div class="ticker-item"><span class="dot"></span>Digital Strategy</div>
+    <div class="ticker-item"><span class="dot"></span>Campaigns</div>
+  </div>
+</div>
+
+<!-- STATEMENT -->
+<div class="statement reveal">
+  <div class="statement-left">
+    <p class="section-eyebrow">Our Belief</p>
+    <div class="statement-stats">
+      <div>
+        <div class="stat-num">140+</div>
+        <div class="stat-label">Brands Built</div>
+      </div>
+      <div>
+        <div class="stat-num">6</div>
+        <div class="stat-label">Awwwards Wins</div>
+      </div>
+      <div>
+        <div class="stat-num">92%</div>
+        <div class="stat-label">Client Retention</div>
+      </div>
+      <div>
+        <div class="stat-num">24</div>
+        <div class="stat-label">Active Projects</div>
+      </div>
+    </div>
+  </div>
+  <div class="statement-right">
+    "The strongest brands don't chase trends. They set the <em>coordinates</em> everyone else navigates by."
+  </div>
+</div>
+
+<!-- SELECTED WORK -->
+<section>
+  <div class="work-header reveal">
+    <div>
+      <p class="section-eyebrow">Selected Work</p>
+      <h2 class="section-title">Projects that <em>define</em><br>industries.</h2>
+    </div>
+    <a href="projects.html" class="btn-ghost">All Case Studies →</a>
+  </div>
+  <div class="work-grid reveal">
+    <!-- Card 1 -->
+    <div class="work-card">
+      <div class="work-visual">
+        <div class="work-bg work-bg-1"></div>
+        <svg class="work-abstract" viewBox="0 0 600 700" xmlns="http://www.w3.org/2000/svg">
+          <g class="shape-rings">
+            <circle cx="300" cy="350" r="200" stroke-width="0.5"/>
+            <circle cx="300" cy="350" r="150" stroke-width="0.5"/>
+            <circle cx="300" cy="350" r="100" stroke-width="0.5"/>
+            <circle cx="300" cy="350" r="50" stroke-width="0.5"/>
+            <circle cx="300" cy="350" r="10" stroke="rgba(212,175,55,0.6)" stroke-width="1" fill="rgba(212,175,55,0.1)"/>
+          </g>
+          <line x1="100" y1="350" x2="500" y2="350" stroke="rgba(212,175,55,0.15)" stroke-width="0.5"/>
+          <line x1="300" y1="150" x2="300" y2="550" stroke="rgba(212,175,55,0.15)" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="work-info">
+        <p class="work-cat">Brand Identity · Strategy</p>
+        <p class="work-name">VANTA CAPITAL</p>
+      </div>
+      <div class="work-arrow">
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="work-card">
+      <div class="work-visual">
+        <div class="work-bg work-bg-2"></div>
+        <svg class="work-abstract" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+          <g class="shape-grid">
+            <line x1="0" y1="70" x2="400" y2="70" stroke-width="0.5"/>
+            <line x1="0" y1="140" x2="400" y2="140" stroke-width="0.5"/>
+            <line x1="0" y1="210" x2="400" y2="210" stroke-width="0.5"/>
+            <line x1="100" y1="0" x2="100" y2="280" stroke-width="0.5"/>
+            <line x1="200" y1="0" x2="200" y2="280" stroke-width="0.5"/>
+            <line x1="300" y1="0" x2="300" y2="280" stroke-width="0.5"/>
+          </g>
+          <rect x="160" y="100" width="80" height="80" fill="none" stroke="rgba(100,100,255,0.5)" stroke-width="0.8"/>
+          <rect x="180" y="120" width="40" height="40" fill="rgba(100,100,255,0.15)" stroke="rgba(100,100,255,0.4)" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="work-info">
+        <p class="work-cat">Web Design · AI Experience</p>
+        <p class="work-name">NEURA LABS</p>
+      </div>
+      <div class="work-arrow">
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="var(--gold)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="work-card">
+      <div class="work-visual">
+        <div class="work-bg work-bg-3"></div>
+        <svg class="work-abstract" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+          <g class="shape-organic">
+            <path d="M80,140 C80,60 200,20 300,80 S380,200 300,240 S80,220 80,140 Z" stroke="rgba(100,200,100,0.3)" stroke-width="0.8"/>
+            <path d="M120,140 C120,80 200,50 280,100 S340,190 280,220 S120,200 120,140 Z" stroke="rgba(100,200,100,0.2)" stroke-width="0.5"/>
+            <circle cx="200" cy="140" r="8" fill="rgba(100,200,100,0.3)" stroke="rgba(100,200,100,0.6)" stroke-width="0.5"/>
+          </g>
+        </svg>
+      </div>
+      <div class="work-info">
+        <p class="work-cat">Campaign · Motion Design</p>
+        <p class="work-name">FLORA BOTANICALS</p>
+      </div>
+      <div class="work-arrow">
+        <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="var(--gold)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES PREVIEW -->
+<section class="services-preview">
+  <div class="reveal">
+    <p class="section-eyebrow">What We Do</p>
+    <h2 class="section-title">Six disciplines.<br><em>One obsession.</em></h2>
+  </div>
+  <div class="services-list reveal">
+    <div class="service-item">
+      <div class="service-num">I</div>
+      <div class="service-name">Web Design &<br>Development</div>
+      <p class="service-brief">Websites that convert visitors into believers — built at the intersection of craft and performance.</p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">II</div>
+      <div class="service-name">Brand<br>Identity</div>
+      <p class="service-brief">Complete identity systems: mark, type, palette, voice. Built to endure a decade of change.</p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">III</div>
+      <div class="service-name">Motion<br>Design</div>
+      <p class="service-brief">Sequences, transitions, and visual language that give brands movement and emotional weight.</p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">IV</div>
+      <div class="service-name">AI<br>Experiences</div>
+      <p class="service-brief">Intelligent interfaces and generative tools that turn cutting-edge models into elegant products.</p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">V</div>
+      <div class="service-name">Digital<br>Strategy</div>
+      <p class="service-brief">Positioning, content architecture, and channel roadmaps that align brand ambition with market reality.</p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">VI</div>
+      <div class="service-name">Campaigns &<br>Activations</div>
+      <p class="service-brief">Integrated campaign systems across digital and physical channels that make people stop scrolling.</p>
+    </div>
+  </div>
+  <div style="margin-top: 40px; text-align:right;" class="reveal">
+    <a href="services.html" class="btn-ghost">Explore All Services →</a>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band reveal">
+  <div class="cta-band-bg"></div>
+  <h2>Ready to build<br><em>something permanent?</em></h2>
+  <p>We take on a limited number of projects each quarter. Let's talk about whether we're the right fit for yours.</p>
+  <a href="contact.html" class="btn-primary">Begin the Conversation</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">AXIO<span>M</span></div>
+      <p class="footer-tagline">A branding and digital experience studio. We build things that last.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <ul>
+        <li><a href="about.html">About</a></li>
+        <li><a href="about.html#team">Team</a></li>
+        <li><a href="about.html#values">Values</a></li>
+        <li><a href="about.html#awards">Awards</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="services.html">Web Design</a></li>
+        <li><a href="services.html">Brand Identity</a></li>
+        <li><a href="services.html">Motion Design</a></li>
+        <li><a href="services.html">AI Experiences</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="projects.html">Case Studies</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">LinkedIn</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 AXIOM Studio. All rights reserved.</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">Behance</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">Dribbble</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.querySelectorAll('a, button, .work-card, .service-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform += ' scale(1.8)';
+      ring.style.width = '56px'; ring.style.height = '56px';
+      ring.style.borderColor = 'rgba(212,175,55,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px'; ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(212,175,55,0.5)';
+    });
+  });
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  function toggleMenu() {
+    const links = document.querySelector('.nav-links');
+    links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+    links.style.flexDirection = 'column';
+    links.style.position = 'absolute';
+    links.style.top = '80px';
+    links.style.left = '0';
+    links.style.right = '0';
+    links.style.background = 'rgba(10,10,10,0.98)';
+    links.style.padding = '24px';
+    links.style.gap = '20px';
+    links.style.borderBottom = '1px solid rgba(245,240,232,0.08)';
+  }
+
+  // Kinetic hero text effect
+  const headline = document.querySelector('.hero-headline');
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 6;
+    const y = (e.clientY / window.innerHeight - 0.5) * 4;
+    headline.style.transform = `translate(${x}px, ${y}px)`;
+  });
+</script>
+</body>
+</html>
